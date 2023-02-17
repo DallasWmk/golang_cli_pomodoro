@@ -12,15 +12,58 @@ func main () {
     num_pomodoros, pomodoro_length := process_args()
     //print_banner()
 
-    fmt.Println(pomodoro_length)
-
     pomo_string := build_pomodoro_string(num_pomodoros, pomodoro_length)
-    fmt.Println(pomo_string)
+    fmt.Printf("%s\r", pomo_string)
 
-    for pomo_counter := 0; pomo_counter <= num_pomodoros; pomo_counter++ {
-        fmt.Printf("%s\r", strings.Repeat("#", pomo_counter))
-        time.Sleep(5 * time.Minute)
+    pomo_segments := pomodoro_length / 5
+    idx := 1
+
+    for pomo_counter := 0; pomo_counter < num_pomodoros; pomo_counter++ {
+        // Long break
+        if pomo_counter != 0 && pomo_counter % 4 == 0 { 
+            take_break_long(&pomo_string, &idx)
+        } else {
+            study(&pomo_string, &idx, pomo_segments)
+            idx++
+            take_break_short(&pomo_string, &idx)
+        }
+        idx++
     }
+}
+
+func study(pomo_string *string, idx *int, pomo_segments int) {
+
+    for segment_counter := 0; segment_counter < pomo_segments; segment_counter++ {
+        time.Sleep(5 * time.Minute)
+        update_pomo_string(pomo_string, idx)
+        *idx++
+    }
+}
+
+func update_pomo_string(pomo_string *string, idx *int) {
+    pomo_temp := *pomo_string
+    *pomo_string = pomo_temp[:*idx] + "#" + pomo_temp[*idx+1:]
+    fmt.Printf("%s\r", *pomo_string)
+}
+
+func take_break_long(pomo_string *string, idx *int) {
+    /*
+        Take long break and update pomo_string
+    */
+    for break_counter := 0; break_counter < 3; break_counter++ {
+        update_pomo_string(pomo_string, idx)
+        *idx++
+    }
+    *idx++
+}
+
+func take_break_short(pomo_string *string, idx *int) {
+    /*
+        Take short break and update pomo_string
+    */
+    time.Sleep(5 * time.Minute)
+    update_pomo_string(pomo_string, idx)
+    *idx++
 }
 
 func process_args() (int, int) {
