@@ -20,7 +20,7 @@ func main () {
 
     for pomo_counter := 0; pomo_counter < num_pomodoros; pomo_counter++ {
         // Long break
-        if pomo_counter != 0 && pomo_counter % 4 == 0 { 
+        if pomo_counter != 0 && pomo_counter % 3 == 0 { 
             take_break_long(&pomo_string, &idx)
         } else {
             study(&pomo_string, &idx, pomo_segments)
@@ -98,16 +98,16 @@ func build_pomodoro_string(num_pomos int, pomo_length int) string {
         // cant build string for no pomos
         // idk maybe make a funny joke
     }
-    
+    fmt.Println("num pomodoros:", num_pomos)    
     breaks_reqd := num_pomos - 1
     pomo_segments := pomo_length / 5
     pomodoro_string := ""
 
     for rests := 0; rests <= breaks_reqd; rests++ {
         pomodoro_string = pomodoro_string + "|" + strings.Repeat("-", pomo_segments)
-        if rests != 0 && rests % 4 == 0 {
+        if rests != 0 && (rests+1) % 3 == 0 {
             pomodoro_string = pomodoro_string + "|" + strings.Repeat("-", 3)
-            break
+            continue
         } 
 
         pomodoro_string = pomodoro_string + "|" + strings.Repeat("-", 1)
@@ -116,10 +116,4 @@ func build_pomodoro_string(num_pomos int, pomo_length int) string {
     pomodoro_string = pomodoro_string + "|"
     return pomodoro_string
 
-}
-
-func print_pomodoro_tracker() {
-    /*
-        print the updated pomodoro tracker to the console.
-    */
 }
